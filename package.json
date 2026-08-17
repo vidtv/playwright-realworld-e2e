@@ -1,7 +1,7 @@
 {
   "name": "playwright-realworld-e2e",
   "version": "1.0.0",
-  "description": "TypeScript + Playwright E2E test framework",
+  "description": "Playwright TypeScript E2E & API test framework for RealWorld app",
   "scripts": {
     "test": "playwright test --project=chromium",
     "test:all": "playwright test",
@@ -18,5 +18,8 @@
     "@types/node": "^26.2.0",
     "dotenv": "^17.4.2",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.5.0"
   }
 }

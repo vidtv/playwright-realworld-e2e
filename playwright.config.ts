@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const baseURL = process.env.CI ? 'http://localhost:3000' : 'https://demo.realworld.show';
-
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -16,7 +14,7 @@ export default defineConfig({
     ['list'],
   ],
   use: {
-    baseURL,
+    baseURL: 'https://demo.realworld.show',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

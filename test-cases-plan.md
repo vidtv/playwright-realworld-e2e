@@ -19,16 +19,18 @@
   * Header displays the registered username.
   * Auth token is stored in `localStorage`.
 
-### TC-AUTH-02: Registration Validation Errors
+### TC-AUTH-02: Registration Form Validation (Mandatory Fields & Invalid Format)
 * **Layer:** UI Negative
-* **Preconditions:** Registered user already exists in DB/State.
+* **Preconditions:** Unauthenticated guest session (`storageState: { cookies: [], origins: [] }`).
 * **Steps:**
   1. Navigate to `/register`.
-  2. Enter existing `email` and `username`.
-  3. Click "Sign up".
+  2. Leave all input fields blank and click the "Sign up" button.
+  3. Enter a valid username, an invalid email address (e.g., `invalid-email-format`), and a valid password.
+  4. Click the "Sign up" button.
 * **Expected Result:**
-  * Inline/top error messages are displayed (e.g., `email has already been taken`, `username has already been taken`).
-  * User remains on `/register`.
+  * For step 2: Validation errors are displayed (e.g., `email can't be blank`, `username can't be blank`, `password can't be blank`).
+  * For step 4: An error message indicates invalid email format or browser-level email validation prevents form submission.
+  * In all negative attempts, the user is not registered, not redirected, and remains on `/register`.
 
 ### TC-AUTH-03: User Login via UI and Session Persistence
 * **Layer:** UI / State

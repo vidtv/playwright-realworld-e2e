@@ -19,18 +19,18 @@
   * Header displays the registered username.
   * Auth token is stored in `localStorage`.
 
-### TC-AUTH-02: Registration Form Validation (Mandatory Fields & Invalid Format)
-* **Layer:** UI Negative
+### TC-AUTH-02: Registration Form Submit Button State (Mandatory Fields)
+* **Layer:** UI Form State
 * **Preconditions:** Unauthenticated guest session (`storageState: { cookies: [], origins: [] }`).
 * **Steps:**
   1. Navigate to `/register`.
-  2. Leave all input fields blank and click the "Sign up" button.
-  3. Enter a valid username, an invalid email address (e.g., `invalid-email-format`), and a valid password.
-  4. Click the "Sign up" button.
+  2. Verify the initial state of the "Sign in" / "Sign up" button.
+  3. Enter only `username` (leave `email` and `password` blank).
+  4. Enter `email` (leave `password` blank).
+  5. Fill in the `password` field so that all mandatory fields have values.
 * **Expected Result:**
-  * For step 2: Validation errors are displayed (e.g., `email can't be blank`, `username can't be blank`, `password can't be blank`).
-  * For step 4: An error message indicates invalid email format or browser-level email validation prevents form submission.
-  * In all negative attempts, the user is not registered, not redirected, and remains on `/register`.
+  * Steps 2–4: The submit button remains disabled (`toBeDisabled()`), preventing submission with incomplete data.
+  * Step 5: Once all fields are populated, the submit button becomes enabled (`toBeEnabled()`).
 
 ### TC-AUTH-03: User Login via UI and Session Persistence
 * **Layer:** UI / State

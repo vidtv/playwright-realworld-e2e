@@ -1,15 +1,18 @@
-import { test, expect, request } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { RegisterPage } from '@pages/registration.page';
+import { MainPage } from '@pages/main.page';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Registration test suite', () => {
 
   let registerPage: RegisterPage;
+  let mainPage: MainPage;
 
   test.beforeEach(async ({ page }) => {
     registerPage = new RegisterPage(page);
+    mainPage = new MainPage(page);
 
     await page.goto('https://demo.realworld.show/register');
   });
@@ -24,7 +27,7 @@ test.describe('Registration test suite', () => {
       await registerPage.getSubmitButton.click();
   
       await expect(page).toHaveURL('https://demo.realworld.show/')
-      await expect(page.locator(`a[href='/profile/${uniqueUsername}']`)).toHaveText(uniqueUsername);
+      await expect(mainPage.getProfileLink(uniqueUsername)).toHaveText(uniqueUsername);
     })
 
     await test.step('Check that JWT token is stored in localStorage after registration', async () => {

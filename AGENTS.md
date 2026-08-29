@@ -1,0 +1,6 @@
+- Language: TypeScript
+- Framework: Playwright Test
+- Design Pattern: Page Object Model + Custom Fixtures
+- Locators: Use getByRole, getByTestId, getByText. Strict ban on XPath and CSS class locators.
+- Assertions: Web-first assertions only (expect(locator).toBeVisible()).
+- API Setup: Use API requests for preconditions when applicable.

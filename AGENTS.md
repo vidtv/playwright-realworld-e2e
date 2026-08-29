@@ -1,0 +1,24 @@
+# Agent Guidelines & Engineering Standards
+
+- **Language & Types:** TypeScript in strict mode. Explicit types for all POM method arguments and return values.
+- **Framework:** Playwright Test (`@playwright/test`).
+- **Design Pattern:** 
+  - Page Object Model (`src/pages/*.page.ts`).
+  - No raw locators or action logic inside `*.spec.ts` files; encapsulate UI actions in page classes.
+  - BasePage for shared navigation and common expectations.
+  - Custom Fixtures for test setup and page instantiation.
+- **Locators:** 
+  - Priority: `getByRole`, `getByPlaceholder`, `getByTestId`, `getByText`.
+  - Strict ban on XPath and fragile CSS class chains (e.g. `.form-control.btn`).
+  - Avoid hardcoded text for dynamic data; locate via attributes or relative containers.
+- **Assertions:** 
+  - Web-first assertions only (e.g., `await expect(locator).toBeVisible()`).
+  - Strict ban on manual sleep statements (`page.waitForTimeout`).
+  - For asynchronous storage checks, use `expect.poll()`.
+- **Async Execution:** Always `await` asynchronous calls, including `test.step()` wrappers.
+- **Data Management:** 
+  - Use `@faker-js/faker` for dynamic, collision-free test data.
+  - No hardcoded shared credentials across parallel tests.
+- **API & Preconditions:** 
+  - Leverage `request` fixtures for data setup and teardown rather than repetitive UI flows.
+  - Ensure API endpoints match the target environment without duplicate `/api` path segments.

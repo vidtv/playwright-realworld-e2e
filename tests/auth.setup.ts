@@ -2,6 +2,7 @@ import { test as setup, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UrlUtils } from '@utils/url.utils';
 
 const authFile = path.join(__dirname, '../.auth/user.json');
 
@@ -39,7 +40,7 @@ setup('Register a new user via API and persist authentication state', async ({ r
     cookies: [],
     origins: [
       {
-        origin: baseURL || 'https://demo.realworld.show',
+        origin: new URL(baseURL || UrlUtils.BASE_URL).origin,
         localStorage: [
           {
             name: 'jwtToken', // Key used by Conduit React / Angular clients

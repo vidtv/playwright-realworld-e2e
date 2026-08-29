@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { RegisterPage } from '@pages/registration.page';
 import { MainPage } from '@pages/main.page';
+import { UrlUtils } from '@utils/url.utils';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -14,7 +15,7 @@ test.describe('Registration test suite', () => {
     registerPage = new RegisterPage(page);
     mainPage = new MainPage(page);
 
-    await page.goto('https://demo.realworld.show/register');
+    await page.goto(new URL('register', UrlUtils.BASE_URL).toString());
   });
 
   test('TC-AUTH-01: Successful User Registration', async ({ page }) => {
@@ -26,7 +27,7 @@ test.describe('Registration test suite', () => {
       await registerPage.populateRegistrationForm(uniqueUsername, uniqueEmail, password);
       await registerPage.getSubmitButton.click();
   
-      await expect(page).toHaveURL('https://demo.realworld.show/')
+      await expect(page).toHaveURL(UrlUtils.BASE_URL)
       await expect(mainPage.getProfileLink(uniqueUsername)).toHaveText(uniqueUsername);
     })
 

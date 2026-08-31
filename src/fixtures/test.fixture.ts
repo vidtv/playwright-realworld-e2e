@@ -18,6 +18,7 @@ interface RegisteredUser {
 }
 
 type CustomFixtures = {
+  authenticatedUser: RegisteredUser;
   authenticatedPage: Page;
   authToken: string;
   authorizedRequest: APIRequestContext;
@@ -42,9 +43,13 @@ async function registerUser(request: APIRequestContext): Promise<RegisteredUser>
 }
 
 export const test = base.extend<CustomFixtures>({
-  authToken: async ({ request }, use) => {
+  authenticatedUser: async ({ request }, use) => {
     const user = await registerUser(request);
-    await use(user.token);
+    await use(user);
+  },
+
+  authToken: async ({ authenticatedUser }, use) => {
+    await use(authenticatedUser.token);
   },
 
   authorizedRequest: async ({ playwright, authToken }, use) => {

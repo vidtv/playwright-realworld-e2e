@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { BasePage } from '@pages/base.page';
 
 export interface ArticleFormData {
@@ -31,6 +31,13 @@ export class EditorPage extends BasePage {
 
   get publishButton() {
     return this.page.getByRole('button', { name: 'Publish Article', exact: true });
+  }
+
+  readonly errorNotifications: Locator = this.page.locator('ul.error-messages > li');
+
+  static readonly ERROR_MESSAGES = {
+    BLANK_TITLE_ERROR: "title can't be blank",
+    BLANK_BODY_ERROR: "body can't be blank"
   }
 
   async open(): Promise<void> {

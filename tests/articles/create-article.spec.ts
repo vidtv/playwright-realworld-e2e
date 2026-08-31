@@ -44,5 +44,19 @@ test.describe('Article lifecycle suite', () => {
         await expect(articlePage.getTag(tag)).toBeVisible();
       }
     });
-  });
+  })
+
+  test('TC-ART-02: Article Creation Validation (Mandatory Fields)', async({ authenticatedPage, authenticatedUser }) => {
+    await test.step('Navigate to the article editor', async () => {
+      await editorPage.open();
+      await expect(editorPage.titleInput).toBeVisible();
+    });
+
+    await test.step('Populate only description field, leave other fields empty, click "Publish Article" and verify error notification messages', async () => {
+      await editorPage.descriptionInput.fill(faker.lorem.sentence());
+      await editorPage.publishArticle();
+
+      await expect(editorPage.errorNotifications).toHaveText([EditorPage.ERROR_MESSAGES.BLANK_TITLE_ERROR, EditorPage.ERROR_MESSAGES.BLANK_BODY_ERROR]);
+    })
+  })
 });

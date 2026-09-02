@@ -13,6 +13,8 @@ export class ArticlePage extends BasePage {
     super(page);
   }
 
+  private readonly articleActions: Locator = this.page.locator('.article-actions');
+
   getTitleHeading(): Locator {
     return this.page.getByRole('heading', { level: 1 });
   }
@@ -27,6 +29,14 @@ export class ArticlePage extends BasePage {
 
   getTag(tag: string): Locator {
     return this.page.getByText(tag, { exact: true });
+  }
+
+  async openForArticle(slug: string): Promise<void> {
+    await this.goto(`article/${slug}`);
+  }
+
+  async deleteArticle(): Promise<void> {
+    await this.articleActions.getByRole('button', { name: 'Delete Article' }).click();
   }
 
   async expectArticleVisible(article: PublishedArticleView): Promise<void> {

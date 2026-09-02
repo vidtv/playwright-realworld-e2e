@@ -44,6 +44,10 @@ export class EditorPage extends BasePage {
     await this.goto('editor');
   }
 
+  async openForArticle(slug: string): Promise<void> {
+    await this.goto(`editor/${slug}`);
+  }
+
   async fillArticleForm(article: ArticleFormData): Promise<void> {
     await this.titleInput.fill(article.title);
     await this.descriptionInput.fill(article.description);

@@ -6,7 +6,7 @@ import { test } from '@fixtures/test.fixture';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test.describe('Article lifecycle suite', () => {
+test.describe('Article creation suite', () => {
   let editorPage: EditorPage;
   let articlePage: ArticlePage;
 

@@ -15,6 +15,14 @@
   - Web-first assertions only (e.g., `await expect(locator).toBeVisible()`).
   - Strict ban on manual sleep statements (`page.waitForTimeout`).
   - For asynchronous storage checks, use `expect.poll()`.
+- **Assertions Placement (Strict Rule):**
+  - All `expect()` assertions MUST live exclusively inside test files (`*.spec.ts`).
+  - Page Object classes (`src/pages/*.page.ts`) and Components (`src/components/*.ts`) MUST NEVER import or contain `expect()` calls.
+  - Page Objects expose read-only Locators (e.g., `readonly submitButton = ...`) and perform actions (e.g., `clickSubmit()`), but never verify states.
+  - Exception: Only technical readiness checks (e.g., `waitForLoaded()`) if strictly required, but no business assertions.
+- **Negative Constraints:**
+  - DO NOT write verification methods inside Page Objects (e.g., forbidden: `verifyTitle()`, `checkErrorMessage()`, `assertIsDeleted()`).
+  - Keep test logic declarative: perform actions via POM, then assert Locators directly in the spec file.
 - **Async Execution:** Always `await` asynchronous calls, including `test.step()` wrappers.
 - **Data Management:** 
   - Use `@faker-js/faker` for dynamic, collision-free test data.

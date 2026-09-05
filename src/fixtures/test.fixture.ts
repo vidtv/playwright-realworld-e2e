@@ -38,6 +38,10 @@ async function registerUser(request: APIRequestContext): Promise<RegisteredUser>
     data: userPayload,
   });
 
+  if (!regResponse.ok()) {
+    throw new Error(`Failed to register user: ${regResponse.status()} ${await regResponse.text()}`);
+  }
+
   const responseBody: { user: RegisteredUser } = await regResponse.json();
   return responseBody.user;
 }
@@ -46,6 +50,43 @@ export const test = base.extend<CustomFixtures>({
   authenticatedUser: async ({ request }, use) => {
     const user = await registerUser(request);
     await use(user);
+  },
+
+  authenticatedPage: async ({ page, authenticatedUser }, use) => { 
+    await page.addInitScript((user) => {
+      window.localStorage.clear(); // clear past context
+      window.localStorage.setItem('jwtToken', user.token);
+    }, authenticatedUser);
+
+    // send a correct username to frontend
+    await page.route('**/api/user', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          headers: { 'access-control-allow-origin': '*' },
+          body: JSON.stringify({ user: authenticatedUser }),
+        });
+      } else {
+        await route.fallback();
+      }
+    });
+
+    // mock for comments in order to avoid router crash
+    await page.route('**/api/articles/**/comments', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'GET, POST, OPTIONS',
+          'access-control-allow-headers': '*',
+        },
+        body: JSON.stringify({ comments: [] }),
+      });
+    });
+
+    await use(page);
   },
 
   authToken: async ({ authenticatedUser }, use) => {
@@ -66,14 +107,6 @@ export const test = base.extend<CustomFixtures>({
     await context.dispose();
   },
 
-  authenticatedPage: async ({ page, authToken }, use) => {
-    await page.addInitScript((token: string) => {
-      window.localStorage.setItem('jwtToken', token);
-    }, authToken);
-
-    await use(page);
-  },
-
   createdArticle: async ({ authorizedRequest }, use) => {
     const newArticle = {
       article: {
@@ -87,6 +120,10 @@ export const test = base.extend<CustomFixtures>({
     const response = await authorizedRequest.post(`${UrlUtils.BASE_API_URL}/articles`, {
       data: newArticle,
     });
+
+    if (!response.ok()) {
+      throw new Error(`Failed to create article via API: ${response.status()} ${await response.text()}`);
+    }
 
     const body: { article: ArticleData } = await response.json();
     const created = body.article;

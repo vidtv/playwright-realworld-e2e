@@ -27,6 +27,10 @@ export class ArticleCardComponent {
     return this.root.locator('.tag-default');
   }
 
+  getTag(tag: string): Locator {
+    return this.tags.filter({ hasText: tag });
+  }
+
   async favorite(): Promise<void> {
     await this.favoriteButton.click();
   }

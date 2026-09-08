@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { BasePage } from '@pages/base.page';
 
 export class ArticlePage extends BasePage {
@@ -16,12 +16,16 @@ export class ArticlePage extends BasePage {
     return this.page.getByText(body, { exact: true });
   }
 
-  getAuthorLink(username: string): Locator {
-    return this.page.locator(`.banner .container a.author[href='/profile/${username}']`);
+  getAuthorLink(): Locator {
+    return this.page.locator(`.banner .container a.author`);
   }
 
   getTag(tag: string): Locator {
     return this.page.getByText(tag, { exact: true });
+  }
+
+  getFollowButton(): Locator {
+    return this.page.locator('.article-actions app-follow-button');
   }
 
   async openForArticle(slug: string): Promise<void> {

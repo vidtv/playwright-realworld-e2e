@@ -19,6 +19,10 @@ export class MainPage extends BasePage {
     await this.goto('/');
   }
 
+  async openYourFeed(): Promise<void> {
+    await this.goto('/?feed=following');
+  }
+
   async selectPopularTag(tag: string): Promise<void> {
     await this.popularTags.getByText(tag, { exact: true }).click();
   }

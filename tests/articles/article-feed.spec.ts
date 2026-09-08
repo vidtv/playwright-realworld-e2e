@@ -1,11 +1,20 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '@fixtures/test.fixture';
 import { MainPage } from '@pages/main.page';
+import { ArticlePage } from '@pages/article.page';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Article feed suite', () => {
+  let articlePage: ArticlePage;
+  let mainPage: MainPage;
+  
+  test.beforeEach(async ({ authenticatedPage }) => {
+    articlePage = new ArticlePage(authenticatedPage);
+    mainPage = new MainPage(authenticatedPage);
+  });
+
   test('TC-ART-05: Global Feed Pagination and filtering by Popular Tag', async ({ page }) => {
-    const mainPage = new MainPage(page);
     let selectedTag: string = '';
 
     await test.step('Navigate to Home page and select a tag from Popular Tags', async () => {
@@ -29,8 +38,32 @@ test.describe('Article feed suite', () => {
       await expect(mainPage.articleCards.first()).toBeVisible();
 
       const articleCardCount = await mainPage.articleCards.count();
-      for (let index = 0; index < articleCardCount; index += 1) {
+      for (let index = 0; index < articleCardCount; index++) {
         await expect(mainPage.getArticleCardAt(index).getTag(selectedTag)).toBeVisible();
+      }
+    });
+  });
+
+  test('TC-ART-06: Your Feed vs Global Feed visibility', async ({ page }) => {
+    let selectedAuthorName = '';
+  
+    await test.step('Navigate to Home page, open the first article from the global feed and follow the author', async () => {
+      await mainPage.open();
+  
+      await mainPage.getArticleCardAt(0).open();
+      await articlePage.getFollowButton().click();
+  
+      selectedAuthorName = (await articlePage.getAuthorLink().innerText()).trim();
+    });
+  
+    await test.step('Navigate to Your Feed and verify that only the first author articles are displayed', async () => {
+      await mainPage.openYourFeed();
+  
+      await expect(mainPage.articleCards.first()).toBeVisible();
+  
+      const articleCardCount = await mainPage.articleCards.count();
+      for (let index = 0; index < articleCardCount; index++) {
+        await expect(mainPage.getArticleCardAt(index).authorLink).toHaveText(selectedAuthorName);
       }
     });
   });

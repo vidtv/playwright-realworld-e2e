@@ -48,7 +48,8 @@ test.describe('Article creation suite', () => {
     await test.step('Verify and published article details', async () => {
       await expect(articlePage.getTitleHeading()).toHaveText(articleData.title);
       await expect(articlePage.getBodyText(articleData.body)).toBeVisible();
-      await expect(articlePage.getAuthorLink(authenticatedUser.username)).toBeVisible();
+      await expect(articlePage.getAuthorLink()).toBeVisible();
+      await expect(articlePage.getAuthorLink()).toHaveText(authenticatedUser.username);
 
       for (const tag of articleData.tags) {
         await expect(articlePage.getTag(tag)).toBeVisible();

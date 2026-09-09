@@ -52,7 +52,8 @@ test.describe('Article management (edit/delete) suite', () => {
 
       await expect(articlePage.getTitleHeading()).toHaveText(updatedTitle);
       await expect(articlePage.getBodyText(updatedBody)).toBeVisible();
-      await expect(articlePage.getAuthorLink(authenticatedUser.username)).toBeVisible();
+      await expect(articlePage.getAuthorLink()).toBeVisible();
+      await expect(articlePage.getAuthorLink()).toHaveText(authenticatedUser.username);
     });
   });
 

@@ -72,20 +72,6 @@ export const test = base.extend<CustomFixtures>({
       }
     });
 
-    // mock for comments in order to avoid router crash
-    await page.route('**/api/articles/**/comments', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        headers: {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, POST, OPTIONS',
-          'access-control-allow-headers': '*',
-        },
-        body: JSON.stringify({ comments: [] }),
-      });
-    });
-
     await use(page);
   },
 

@@ -52,4 +52,8 @@ export class ArticlePage extends BasePage {
   async deleteArticle(): Promise<void> {
     await this.articleActions.getByRole('button', { name: 'Delete Article' }).click();
   }
+
+  getCommentByText(commentText: string): CommentComponent {
+    return new CommentComponent(this.getCommentCards().filter({ hasText : commentText }));
+  } 
 }

@@ -10,6 +10,19 @@ export interface ArticleData {
   tagList: string[];
 }
 
+export interface CommentData {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  body: string;
+  author: {
+    username: string;
+    bio: string | null;
+    image: string;
+    following: boolean;
+  };
+}
+
 interface RegisteredUser {
   username: string;
   email: string;
@@ -23,6 +36,7 @@ type CustomFixtures = {
   authToken: string;
   authorizedRequest: APIRequestContext;
   createdArticle: ArticleData;
+  createdComment: CommentData;
 };
 
 async function registerUser(request: APIRequestContext): Promise<RegisteredUser> {
@@ -72,20 +86,6 @@ export const test = base.extend<CustomFixtures>({
       }
     });
 
-    // mock for comments in order to avoid router crash
-    await page.route('**/api/articles/**/comments', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        headers: {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, POST, OPTIONS',
-          'access-control-allow-headers': '*',
-        },
-        body: JSON.stringify({ comments: [] }),
-      });
-    });
-
     await use(page);
   },
 
@@ -132,4 +132,28 @@ export const test = base.extend<CustomFixtures>({
 
     await authorizedRequest.delete(`${UrlUtils.BASE_API_URL}/articles/${created.slug}`);
   },
+
+  createdComment: async ({ authorizedRequest, createdArticle }, use) => {
+    const commentPayload = {
+      comment: {
+        body: faker.lorem.paragraph(),
+      }
+    }
+
+    const response = await authorizedRequest.post(
+      `${UrlUtils.BASE_API_URL}/articles/${createdArticle.slug}/comments`, 
+      { data: commentPayload }
+    );
+
+    if (!response.ok()) {
+      throw new Error(`Failed to create comment: ${response.status()} ${await response.text()}`);
+    }
+
+    const { comment }: { comment: CommentData } = await response.json();
+    await use(comment);
+
+    await authorizedRequest.delete(
+      `${UrlUtils.BASE_API_URL}/articles/${createdArticle.slug}/comments/${comment.id}`
+    );
+  }
 });

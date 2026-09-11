@@ -45,6 +45,10 @@ export class ArticlePage extends BasePage {
     return new CommentComponent(this.getCommentCards().nth(index));
   }
 
+  getSignInOrSignUpBanner(): Locator {
+    return this.page.getByText('Sign in or sign up to add comments on this article.');
+  }
+
   async openForArticle(slug: string): Promise<void> {
     await this.goto(`article/${slug}`);
   }

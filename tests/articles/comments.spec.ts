@@ -6,7 +6,7 @@ import { faker } from "@faker-js/faker";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test.describe('Article comments suite', () => {
+test.describe('Article comments suite (for authorised users)', () => {
     let articlePage: ArticlePage;
     let mainPage: MainPage;
 
@@ -15,7 +15,7 @@ test.describe('Article comments suite', () => {
         mainPage = new MainPage(authenticatedPage);
     });
 
-    test('TC-COM-01: Add Comment to an Article', async ({ authenticatedUser, createdArticle }) => {
+    test('TC-COM-01: Add comment to an Article', async ({ authenticatedUser, createdArticle }) => {
         await test.step('Navigate to the created article, enter text into the comment textarea, click `Post Comment` button and verify date and username of the new comment', async () => {
             await articlePage.openForArticle(createdArticle.slug);
 
@@ -33,7 +33,7 @@ test.describe('Article comments suite', () => {
         })
     })
 
-    test('TC-COM-02: Delete Own Comment', async ({ authenticatedPage, createdArticle, createdComment }) => {
+    test('TC-COM-02: Delete own comment', async ({ authenticatedPage, createdArticle, createdComment }) => {
         const commentCard = articlePage.getCommentByText(createdComment.body);
 
         await test.step('Navigate to the created article and check that the created comment and delete button are displayed', async () => {
@@ -52,6 +52,40 @@ test.describe('Article comments suite', () => {
             expect([200, 204]).toContain(response.status());
 
             await expect(commentCard.getSelf()).toBeHidden();
+        })
+    })
+})
+
+test.describe('Article comments suite (for unauthorised users)', () => {
+    let articlePage: ArticlePage;
+
+    test.beforeEach(async ({ page }) => {
+        articlePage = new ArticlePage(page);
+    });
+
+    test('TC-COM-03: Comment section for guest users (Read-only)', async ({ page, createdArticle }) => {
+        await test.step('Navigate to the created article as a guest user and check that comments section is replaced with `Sign in or sign up` banner and existing comments are readable', async () => {
+            // intercept anonymous page requests and return the article and comments data obtained from the fixture
+            await page.route(`**/api/articles/${createdArticle.slug}`, (route) =>
+                route.fulfill({
+                  status: 200,
+                  contentType: 'application/json',
+                  body: JSON.stringify({ article: createdArticle }),
+                })
+            );
+
+            await page.route(`**/api/articles/${createdArticle.slug}/comments`, (route) =>
+                route.fulfill({
+                  status: 200,
+                  contentType: 'application/json',
+                  body: JSON.stringify({ comments: [] }),
+                })
+            );
+
+            await articlePage.openForArticle(createdArticle.slug);
+
+            await expect(articlePage.getSignInOrSignUpBanner()).toBeVisible();
+            await expect(articlePage.getCommentTextarea()).toBeHidden();
         })
     })
 })

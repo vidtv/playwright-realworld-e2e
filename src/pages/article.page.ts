@@ -29,6 +29,16 @@ export class ArticlePage extends BasePage {
     return this.page.locator('.article-actions app-follow-button');
   }
 
+  getFavoriteButton(): Locator {
+    return this.page.locator('.article-actions app-favorite-button');
+  }
+
+  async getFavoriteButtonCounter(): Promise<number> {
+    const counterText = await this.getFavoriteButton().locator('.counter').innerText();
+    const counterNumber = parseInt(counterText.replace(/\D/g, ''), 10);
+    return counterNumber;
+  }
+
   getCommentTextarea(): Locator {
     return this.page.locator('.comment-form textarea[placeholder="Write a comment..."]');
   }

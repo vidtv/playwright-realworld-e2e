@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class UserProfilePage extends BasePage {
@@ -9,6 +9,10 @@ export class UserProfilePage extends BasePage {
         super(page);
     }
 
+    get articleCards(): Locator {
+        return this.page.locator('app-article-preview');
+    }
+    
     async isAvatarLoaded(): Promise<boolean> {
         return await this.avatarImage.evaluate((img: HTMLImageElement) => {
           return img.complete && img.naturalWidth > 0;

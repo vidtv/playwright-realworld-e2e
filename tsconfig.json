@@ -17,5 +17,5 @@
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "playwright.config.ts", "eslint.config.js"]
+  "include": ["src/**/*", "tests/**/*", "playwright.config.ts"]
 }

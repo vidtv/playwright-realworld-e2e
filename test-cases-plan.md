@@ -249,7 +249,7 @@
 
 
 
-### TC-HYB-01: Fast State Setup via API + Fast UI Teardown
+### TC-HYB-01: Fast State Setup via API + Fast API Teardown
 
 - **Layer:** API Fixture + UI Assertions
 - **Preconditions:** Reusable API client helper attached to Playwright test fixture.
@@ -267,7 +267,8 @@
 - **Layer:** API
 - **Preconditions:** API endpoint `/api/articles`.
 - **Steps:**
-  1. Send GET request to `/api/articles?limit=10`.
+  1. Send GET request to `/api/articles?limit=20`.
+  2. Validate response HTTP status code.
 - **Expected Result:**
   - Response status is 200 OK.
   - JSON body matches JSON schema (contains `articles` array, `articlesCount` integer, correct article properties).

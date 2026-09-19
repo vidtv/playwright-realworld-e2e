@@ -24,6 +24,7 @@
   - DO NOT write verification methods inside Page Objects (e.g., forbidden: `verifyTitle()`, `checkErrorMessage()`, `assertIsDeleted()`).
   - Keep test logic declarative: perform actions via POM, then assert Locators directly in the spec file.
 - **Async Execution:** Always `await` asynchronous calls, including `test.step()` wrappers.
+- **Test Declarations:** Keep the test title and destructured fixtures on a single line, e.g. `test('TC-MOCK-01: Empty Feed UI Resilience (Empty State)', async ({ authenticatedPage, authenticatedUser }) => {`. Do not wrap the callback signature across multiple lines.
 - **Data Management:** 
   - Use `@faker-js/faker` for dynamic, collision-free test data.
   - No hardcoded shared credentials across parallel tests.

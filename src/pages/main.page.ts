@@ -11,8 +11,20 @@ export class MainPage extends BasePage {
     return this.page.getByText('Popular Tags', { exact: true }).locator('..').getByRole('link');
   }
 
+  get popularTagsContainer(): Locator {
+    return this.page.getByText('Popular Tags', { exact: true }).locator('..');
+  }
+
   get articleCards(): Locator {
     return this.page.locator('app-article-preview');
+  }
+
+  get emptyFeedMessage(): Locator {
+    return this.page.getByText('No articles are here... yet.', { exact: true });
+  }
+
+  get loadingArticlesIndicator(): Locator {
+    return this.page.getByText('Loading articles...', { exact: true });
   }
 
   async open(): Promise<void> {

@@ -11,6 +11,10 @@ export class MainPage extends BasePage {
     return this.page.getByText('Popular Tags', { exact: true }).locator('..').getByRole('link');
   }
 
+  get popularTagsContainer(): Locator {
+    return this.page.getByText('Popular Tags', { exact: true }).locator('..');
+  }
+
   get articleCards(): Locator {
     return this.page.locator('app-article-preview');
   }

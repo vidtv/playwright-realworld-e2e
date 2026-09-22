@@ -14,7 +14,7 @@ test.describe('Article feed suite', () => {
     mainPage = new MainPage(authenticatedPage);
   });
 
-  test('TC-ART-05: Global Feed Pagination and filtering by Popular Tag', async ({ page }) => {
+  test('TC-ART-05: Global Feed Pagination and filtering by Popular Tag', async () => {
     let selectedTag: string = '';
 
     await test.step('Navigate to Home page and select a tag from Popular Tags', async () => {
@@ -44,7 +44,7 @@ test.describe('Article feed suite', () => {
     });
   });
 
-  test('TC-ART-06: Your Feed vs Global Feed visibility', async ({ page }) => {
+  test('TC-ART-06: Your Feed vs Global Feed visibility', async () => {
     let selectedAuthorName = '';
   
     await test.step('Navigate to Home page, open the first article from the global feed and follow the author', async () => {

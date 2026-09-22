@@ -41,9 +41,9 @@ test.describe('Registration test suite', () => {
     })
   });
 
-  test('TC-AUTH-02: Registration Form Validation (Mandatory Fields & Invalid Format)', async ({ }) => {
+  test('TC-AUTH-02: Registration Form Validation (Mandatory Fields & Invalid Format)', async () => {
     await test.step('Open the registration page, do not populate any of fields and check that Sign Up button is disabled', async () => {
-      expect(registerPage.getSubmitButton).toBeDisabled;
+      expect(registerPage.getSubmitButton).toBeDisabled();
     });
 
     await test.step('Populate Username and Email and leave Password field empty, and check that Sign Up button is still disabled', async () => {
@@ -53,7 +53,7 @@ test.describe('Registration test suite', () => {
       await registerPage.getUsernameInput.fill(testUsername);
       await registerPage.getEmailInput.fill(testEmail);
 
-      expect(registerPage.getSubmitButton).toBeDisabled;
+      expect(registerPage.getSubmitButton).toBeDisabled();
     })
   });
 });

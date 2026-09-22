@@ -1,0 +1,92 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'playwright.config.ts'
+      - '.github/workflows/**'
+  schedule:
+    # Run automatically every night at 02:00 UTC
+    - cron: '0 2 * * *'
+  # Allow manual trigger from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: 'Filter tests by tag/grep (e.g. @api, @smoke)'
+        required: false
+        default: ''
+
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js environment and enable npm caching
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 3. Install project dependencies
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # 4. Run static code analysis to catch syntax or async issues early
+      - name: Run ESLint
+        run: npm run lint
+
+      # 5. Extract Playwright version for exact cache key matching
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npx playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
+      # 6. Cache Playwright browser binaries to speed up workflow execution
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      # 7a. Download and install browser binaries if cache miss occurs
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      # 7b. Install OS system dependencies if browser binaries were restored from cache
+      - name: Install Playwright OS Dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
+
+      # 8. Execute Playwright test suite (with optional grep filter for manual triggers)
+      - name: Run Playwright tests
+        run: |
+          if [ -n "${{ github.event.inputs.grep }}" ]; then
+            npx playwright test --grep "${{ github.event.inputs.grep }}"
+          else
+            npx playwright test
+          fi
+        env:
+          CI: true
+
+      # 9. Upload test report, screenshots, and traces as artifacts upon completion/failure
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

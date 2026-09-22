@@ -1,18 +1,15 @@
 import { expect } from "@playwright/test";
 import { test } from "@fixtures/test.fixture";
 import { ArticlePage } from "@pages/article.page";
-import { MainPage } from "@pages/main.page";
 import { faker } from "@faker-js/faker";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Article comments suite (for authorised users)', () => {
     let articlePage: ArticlePage;
-    let mainPage: MainPage;
 
     test.beforeEach(async ({ authenticatedPage }) => {
         articlePage = new ArticlePage(authenticatedPage);
-        mainPage = new MainPage(authenticatedPage);
     });
 
     test('TC-COM-01: Add comment to an Article', async ({ authenticatedUser, createdArticle }) => {

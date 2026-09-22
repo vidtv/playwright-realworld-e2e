@@ -33,7 +33,7 @@ test.describe('Article creation suite', () => {
       await editorPage.bodyInput.blur();
       await expect(editorPage.publishButton).toBeEnabled();
 
-      await editorPage.publishButton.click(),
+      await editorPage.publishButton.click();
 
       await expect(authenticatedPage).toHaveURL(/\/article\/.+/, { timeout: 15_000 });
 
@@ -57,7 +57,7 @@ test.describe('Article creation suite', () => {
     });
   })
 
-  test('TC-ART-02: Article Creation Validation (Mandatory Fields)', async({ authenticatedPage, authenticatedUser }) => {
+  test('TC-ART-02: Article Creation Validation (Mandatory Fields)', async() => {
     await test.step('Navigate to the article editor', async () => {
       await editorPage.open();
       await expect(editorPage.titleInput).toBeVisible();

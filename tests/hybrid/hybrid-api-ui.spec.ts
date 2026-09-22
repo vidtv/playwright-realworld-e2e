@@ -5,7 +5,7 @@ import { UrlUtils } from "@utils/url.utils";
 
 test.describe('Hybrid UI-API test suite', () => {
     const ARTICLES_COUNT = 3;
-    const createdSlugs: String[] = [];
+    const createdSlugs: string[] = [];
 
     test.beforeEach( async ({ authorizedRequest }) => {
         const articlePromises = Array.from({ length: ARTICLES_COUNT }, (_, i) =>

@@ -11,17 +11,22 @@
     "report": "playwright show-report",
     "lint": "eslint ."
   },
-  "keywords": ["playwright", "e2e", "typescript", "testing"],
+  "keywords": [
+    "playwright",
+    "e2e",
+    "typescript",
+    "testing"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.50.0",
     "@types/node": "^22.10.0",
-    "dotenv": "^16.4.7",
-    "typescript": "~5.7.3",
-    "eslint": "^9.18.0",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0"
+    "@typescript-eslint/parser": "^8.20.0",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.39.5",
+    "typescript": "~5.7.3"
   },
   "dependencies": {
     "@faker-js/faker": "^9.5.0"

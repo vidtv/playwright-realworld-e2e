@@ -46,7 +46,7 @@ jobs:
 
       # 4. Run static code analysis to catch syntax or async issues early
       - name: Run ESLint
-        run: npx eslint .
+        run: npm run lint
 
       # 5. Extract Playwright version for exact cache key matching
       - name: Get Playwright version

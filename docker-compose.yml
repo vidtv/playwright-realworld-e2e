@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: ./app/node-express/api
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - SECRET=secret_key
+      - MONGODB_URI=mongodb://mongodb:27017/conduit
+      - MONGODB_URL=mongodb://mongodb:27017/conduit
+      - MONGO_URL=mongodb://mongodb:27017/conduit
+    depends_on:
+      - mongodb
+    restart: on-failure
+
+  client:
+    build:
+      context: ./app/react-redux/client
+    ports:
+      - "8080:8080"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:3000/api
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:

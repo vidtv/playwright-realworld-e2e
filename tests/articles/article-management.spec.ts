@@ -22,7 +22,6 @@ test.describe('Article management (edit/delete) suite', () => {
   test('TC-ART-03: Edit Existing Article', async ({ authenticatedPage, authenticatedUser, createdArticle }) => {
     const updatedTitle = `Updated ${faker.lorem.words(3)} ${faker.string.alphanumeric(4)}`;
     const updatedBody = faker.lorem.paragraph();
-    const originalSlug = createdArticle.slug;
 
     await test.step('Open the created article in the editor', async () => {
       await editorPage.openForArticle(createdArticle.slug);

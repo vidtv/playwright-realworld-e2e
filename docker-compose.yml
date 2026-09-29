@@ -24,7 +24,7 @@ services:
 
   client:
     build:
-      context: ./angular-realworld-example-app
+      context: ./app/angular-realworld-example-app
     ports:
       - "4200:4200"
     depends_on:

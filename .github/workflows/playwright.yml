@@ -13,7 +13,7 @@ on:
       - 'playwright.config.ts'
       - 'docker-compose.yml'
       - 'app/**'
-      - 'angular-realworld-example-app/**'
+      - 'app/angular-realworld-example-app/**'
       - '.github/workflows/**'
   schedule:
     # Run automatically every night at 02:00 UTC

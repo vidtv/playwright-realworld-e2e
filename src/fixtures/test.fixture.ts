@@ -42,8 +42,8 @@ type CustomFixtures = {
 async function registerUser(request: APIRequestContext): Promise<RegisteredUser> {
   const userPayload = {
     user: {
-      username: `user_${faker.string.alphanumeric(8)}`,
-      email: `user_${faker.string.alphanumeric(6)}@example.com`,
+      username: `user${faker.string.alphanumeric(8)}`,
+      email: `user${faker.string.alphanumeric(6).toLowerCase()}@example.com`,
       password: 'Password123!',
     },
   };

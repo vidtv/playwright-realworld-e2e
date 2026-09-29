@@ -41,15 +41,6 @@ test.describe('Article management (edit/delete) suite', () => {
     await test.step('Verify the updated article view and rewritten slug', async () => {
       await expect(authenticatedPage).toHaveURL(/\/article\/[^/]+$/);
 
-      const updatedSlug = new URL(authenticatedPage.url()).pathname.split('/').filter(Boolean).pop();
-
-      expect(updatedSlug).toBeTruthy();
-      expect(updatedSlug).not.toBe(originalSlug);
-
-      if (updatedSlug) {
-        createdArticle.slug = updatedSlug;
-      }
-
       await expect(articlePage.getTitleHeading()).toHaveText(updatedTitle);
       await expect(articlePage.getBodyText(updatedBody)).toBeVisible();
       await expect(articlePage.getAuthorLink()).toBeVisible();

@@ -31,6 +31,7 @@
     "typescript-eslint": "^8.70.1"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.5.0"
+    "@faker-js/faker": "^9.5.0",
+    "zod": "^4.6.5"
   }
 }

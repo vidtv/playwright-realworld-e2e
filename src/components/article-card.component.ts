@@ -36,6 +36,6 @@ export class ArticleCardComponent {
   }
 
   async open(): Promise<void> {
-    await this.title.click();
+    await this.description.click();
   }
 }

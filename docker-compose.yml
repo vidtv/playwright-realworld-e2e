@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:5.0
@@ -12,7 +10,7 @@ services:
     build:
       context: ./app/node-express/api
     ports:
-      - "3000:3000"
+      - "4000:3000"
     environment:
       - PORT=3000
       - NODE_ENV=production
@@ -26,12 +24,24 @@ services:
 
   client:
     build:
-      context: ./app/react-redux/client
+      context: ./angular-realworld-example-app
     ports:
-      - "8080:8080"
-    environment:
-      - REACT_APP_BACKEND_URL=http://localhost:3000/api
+      - "4200:4200"
     depends_on:
+      - api
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.62.1-noble
+    working_dir: /work
+    volumes:
+      - .:/work
+    ipc: host
+    environment:
+      - BASE_URL=http://client:4200
+      - API_URL=http://api:3000/api
+    command: npx playwright test
+    depends_on:
+      - client
       - api
 
 volumes:

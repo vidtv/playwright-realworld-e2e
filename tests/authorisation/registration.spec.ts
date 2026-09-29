@@ -28,7 +28,7 @@ test.describe('Registration test suite', () => {
       await registerPage.getSubmitButton.click();
   
       await expect(page).toHaveURL(UrlUtils.BASE_URL)
-      await expect(mainPage.getProfileLink(uniqueUsername)).toHaveText(uniqueUsername);
+      await expect(mainPage.getProfileLink(uniqueUsername)).toHaveText(new RegExp(uniqueUsername, 'i'));
     })
 
     await test.step('Check that JWT token is stored in localStorage after registration', async () => {

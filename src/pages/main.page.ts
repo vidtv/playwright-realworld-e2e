@@ -48,8 +48,8 @@ export class MainPage extends BasePage {
       .filter({ hasText: tag });
   }
 
-  getProfileLink(username: string): Locator {
-    return this.page.locator(`a[href='/profile/${username}']`);
+  getProfileLink(username: string) {
+    return this.page.getByRole('link', { name: new RegExp(`^${username}$`, 'i') });
   }
 
   get signInLink() {

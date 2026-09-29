@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  api:
+    image: node:12
+    command: "yarn run start"
+    working_dir: /app/node-express/api
+    volumes:
+      - ".:/app"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - SECRET=conduit
+      - MONGODB_URI=mongodb://mongo:27027/conduit
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    command: mongod --port 27027 --storageEngine=wiredTiger
+    ports:
+      - 27027:27027
+    volumes:
+      - ./tests/data:/data

@@ -1,0 +1,22 @@
+{
+    "name": "tests",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "wait-and-test": "server-test http-get://client:8080 test",
+        "start": "python3 -m http.server 9000",
+        "test": "cypress run"
+    },
+    "devDependencies": {
+        "cypress": "5.1.0",
+        "cypress-testing-library": "^2.3.6",
+        "eslint": "^7.19.0",
+        "eslint-config-prettier": "^7.2.0",
+        "eslint-plugin-cypress": "^2.11.2",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-prettier": "^3.3.1",
+        "prettier": "^2.2.1",
+        "start-server-and-test": "^1.11.3"
+    }
+}

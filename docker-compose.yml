@@ -1,0 +1,48 @@
+services:
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: ./app/node-express/api
+    ports:
+      - "4000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - SECRET=secret_key
+      - MONGODB_URI=mongodb://mongodb:27017/conduit
+      - MONGODB_URL=mongodb://mongodb:27017/conduit
+      - MONGO_URL=mongodb://mongodb:27017/conduit
+    depends_on:
+      - mongodb
+    restart: on-failure
+
+  client:
+    build:
+      context: ./angular-realworld-example-app
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.62.1-noble
+    working_dir: /work
+    volumes:
+      - .:/work
+    ipc: host
+    environment:
+      - BASE_URL=http://client:4200
+      - API_URL=http://api:3000/api
+    command: npx playwright test
+    depends_on:
+      - client
+      - api
+
+volumes:
+  mongo_data:

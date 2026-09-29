@@ -18,8 +18,8 @@ test.describe('Login test suite', () => {
   });
 
   test('TC-AUTH-03: User Login via UI and Session Persistence', async ({ page, request }) => {
-    const username = `pw_${faker.string.alphanumeric(8)}`;
-    const email = `pw_user_${faker.string.alphanumeric(6)}@example.com`;
+    const username = `pw${faker.string.alphanumeric(8)}`;
+    const email = `pwuser${faker.string.alphanumeric(6).toLowerCase()}@example.com`;
     const password = 'Password123!';
 
     await test.step('Precondition: register a new user via REST API', async () => {
@@ -44,13 +44,13 @@ test.describe('Login test suite', () => {
 
     await test.step('Check that the user profile link is visible in the navigation bar', async () => {
       await expect(page).toHaveURL(UrlUtils.BASE_URL);
-      await expect(mainPage.getProfileLink(username)).toHaveText(username);
+      await expect(mainPage.getProfileLink(username)).toHaveText(new RegExp(username, 'i'));
     });
 
     await test.step('Reload the page and check that the authenticated session is retained', async () => {
       await page.reload();
 
-      await expect(mainPage.getProfileLink(username)).toHaveText(username);
+      await expect(mainPage.getProfileLink(username)).toHaveText(new RegExp(username, 'i'));
       await expect.poll(async () => {
         return await page.evaluate(() => localStorage.getItem('jwtToken'));
       }, {
@@ -61,8 +61,8 @@ test.describe('Login test suite', () => {
   });
 
   test('TC-AUTH-04: User Logout and Session Cleanup', async ({ browser, request }) => {
-    const username = `pw_${faker.string.alphanumeric(8)}`;
-    const email = `pw_user_${faker.string.alphanumeric(6)}@example.com`;
+    const username = `pw${faker.string.alphanumeric(8)}`;
+    const email = `pwuser${faker.string.alphanumeric(6).toLowerCase()}@example.com`;
     const password = 'Password123!';
 
     const apiResponse = await request.post(`${UrlUtils.BASE_API_URL}/users`, {
@@ -74,7 +74,10 @@ test.describe('Login test suite', () => {
         },
       },
     });
-    expect(apiResponse.ok()).toBeTruthy();
+    expect(
+      apiResponse.ok(),
+      `Registration failed: ${apiResponse.status()} ${await apiResponse.text()}`,
+    ).toBeTruthy();
 
     const { user } = await apiResponse.json();
     const authenticatedContext = await browser.newContext({

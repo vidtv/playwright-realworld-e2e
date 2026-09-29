@@ -2,6 +2,7 @@ import { test } from "@fixtures/test.fixture";
 import { UserProfilePage } from "@pages/userprofile.page";
 import { expect } from "@playwright/test";
 import { UrlUtils } from "@utils/url.utils";
+import { z } from "zod";
 
 test.describe('Hybrid UI-API test suite', () => {
     const ARTICLES_COUNT = 3;
@@ -47,6 +48,32 @@ test.describe('Hybrid UI-API test suite', () => {
     })
 })
 
+//  response schemas
+const AuthorSchema = z.object({
+    username: z.string(),
+    bio: z.string().nullable().optional(), // The field may be a string, null, or absent
+    image: z.string(),
+    following: z.boolean(),
+  });
+  
+  const ArticleSchema = z.object({
+    slug: z.string(),
+    title: z.string(),
+    description: z.string(),
+    body: z.string().optional(),
+    tagList: z.array(z.string()),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    favorited: z.boolean(),
+    favoritesCount: z.number(),
+    author: AuthorSchema,
+  });
+  
+  const ArticlesResponseSchema = z.object({
+    articles: z.array(ArticleSchema),
+    articlesCount: z.number(),
+  });
+
 test.describe('API test suite', () => {
     test('TC-HYB-02: API contract & response schema validation', async ({ authorizedRequest }) => {
         await test.step('Retrieve all articles via API with limit parameter and verify that response body matches JSON schema', async () => {
@@ -58,29 +85,13 @@ test.describe('API test suite', () => {
             expect(response.status()).toBe(200);
         
             const body = await response.json();
+            const parseResult = ArticlesResponseSchema.safeParse(body);
+
+            expect(
+                parseResult.success,
+                JSON.stringify(parseResult.error?.format(), null, 2)
+              ).toBe(true);
             expect(body.articles.length).toBeLessThanOrEqual(articlesLimit);
-            expect(typeof body.articlesCount).toBe('number');
-
-            if (body.articles.length > 0) {
-                const article = body.articles[0];
-
-                expect(article).toMatchObject({
-                  slug: expect.any(String),
-                  title: expect.any(String),
-                  description: expect.any(String),
-                  tagList: expect.any(Array),
-                  createdAt: expect.any(String),
-                  updatedAt: expect.any(String),
-                  favorited: expect.any(Boolean),
-                  favoritesCount: expect.any(Number),
-                  author: expect.objectContaining({
-                    username: expect.any(String),
-                    bio: article.author.bio === null ? null : expect.any(String),
-                    image: expect.any(String),
-                    following: expect.any(Boolean),
-                  }),
-                });
-              }
         })
     })
 })

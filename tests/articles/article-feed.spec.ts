@@ -1,17 +1,69 @@
-import { expect } from '@playwright/test';
+import { APIRequestContext, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 import { test } from '@fixtures/test.fixture';
 import { MainPage } from '@pages/main.page';
 import { ArticlePage } from '@pages/article.page';
+import { UrlUtils } from '@utils/url.utils';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Article feed suite', () => {
   let articlePage: ArticlePage;
   let mainPage: MainPage;
+
+  let createdSlug: string;
+  let articleOwnerRequest: APIRequestContext | undefined;
+  const testTag = `tag-${Date.now()}`;
   
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ authenticatedPage, playwright, request }) => {
     articlePage = new ArticlePage(authenticatedPage);
     mainPage = new MainPage(authenticatedPage);
+
+    const username = `feeduser${faker.string.alphanumeric(8)}`;
+    const email = `feeduser${faker.string.alphanumeric(6).toLowerCase()}@example.com`;
+    const password = 'Password123!';
+
+    const registrationResponse = await request.post(`${UrlUtils.BASE_API_URL}/users`, {
+      data: { user: { username, email, password } },
+    });
+    if (!registrationResponse.ok()) {
+      throw new Error(
+        `Failed to register feed author: ${registrationResponse.status()} ${await registrationResponse.text()}`,
+      );
+    }
+
+    const { user } = (await registrationResponse.json()) as {
+      user: { token: string };
+    };
+    articleOwnerRequest = await playwright.request.newContext({
+      extraHTTPHeaders: { Authorization: `Token ${user.token}` },
+    });
+
+    const response = await articleOwnerRequest.post(`${UrlUtils.BASE_API_URL}/articles`, {
+      data: {
+        article: {
+          title: `Feed Test Article ${Date.now()}`,
+          description: 'Test Description',
+          body: 'Test Body Content',
+          tagList: [testTag],
+        },
+      },
+    });
+    if (!response.ok()) {
+      throw new Error(`Failed to create feed article: ${response.status()} ${await response.text()}`);
+    }
+
+    const body = (await response.json()) as { article: { slug: string } };
+    createdSlug = body.article.slug;
+  });
+
+  test.afterEach(async () => {
+    if (createdSlug) {
+      await articleOwnerRequest?.delete(`${UrlUtils.BASE_API_URL}/articles/${createdSlug}`);
+    }
+    await articleOwnerRequest?.dispose();
+    articleOwnerRequest = undefined;
+    createdSlug = '';
   });
 
   test('TC-ART-05: Global Feed Pagination and filtering by Popular Tag', async () => {
@@ -47,10 +99,8 @@ test.describe('Article feed suite', () => {
   test('TC-ART-06: Your Feed vs Global Feed visibility', async () => {
     let selectedAuthorName = '';
   
-    await test.step('Navigate to Home page, open the first article from the global feed and follow the author', async () => {
-      await mainPage.open();
-  
-      await mainPage.getArticleCardAt(0).open();
+    await test.step('Open the test article from the global feed and follow its author', async () => {
+      await articlePage.openForArticle(createdSlug);
       await articlePage.getFollowButton().click();
   
       selectedAuthorName = (await articlePage.getAuthorLink().innerText()).trim();

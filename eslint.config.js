@@ -5,7 +5,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['node_modules/', 'playwright-report/', 'test-results/', 'dist/'],
+    ignores: ['node_modules/', 'playwright-report/', 'test-results/', 'dist/', 'app', 'angular-realworld-example-app'],
   },
   {
     rules: {
